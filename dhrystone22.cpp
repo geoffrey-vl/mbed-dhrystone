@@ -2,7 +2,7 @@
 #include <stdio.h> // strcpy, strcmp 
 #include <stdlib.h> //malloc
 #include <string.h> //strcpy
-#include <time.h>
+#include "Timer.h"
 
 #define Version "C, Version 2.2"
 
@@ -10,14 +10,13 @@
 #define NUMBER_OF_RUNS 50000  //Default number of runs
 
 
-#define CLOCK_TYPE "time()"
+#define CLOCK_TYPE "mbed::Timer"
+mbed::Timer timer;
 #undef HZ
-#define HZ	(1) // time() returns time in seconds
-//extern long     time(); // see library function "time"
-#define Too_Small_Time 2 // Measurements should last at least 2 seconds
-#define Start_Timer() g_dry_BeginTime = time (NULL)
-#define Stop_Timer()  g_dry_EndTime   = time (NULL)
-#define US_PER_SECOND     1000000.0
+#define HZ				(1000)		// mbed::Timer returns time in milliseconds (=1000Hz resolution)
+#define TOO_SMALL_TIME	(2*HZ)		// Measurements should last at least 2 seconds
+#define US_PER_SECOND	1000000.0
+#define VAX_11_780_DHRYSTONES_PER_SECOND 1757 	// the number of Dhrystones per second obtained on the VAX 11/780, nominally a 1 MIPS machine
 
 // Procedure for the assignment of structures,
 // if the C compiler doesn't support this feature
@@ -90,11 +89,10 @@ char            g_Char1,
 int             g_Array1 [50];
 int             g_Array2 [50] [50];
 //public global vars:
-long            g_dry_BeginTime,
-                g_dry_EndTime,
-                g_dry_UserTime;
+long            g_dry_UserTime;
 float           g_dry_Microseconds,
-                g_dry_Dhrystones_Per_Second;
+                g_dry_Dhrystones_Per_Second,
+				g_dmips;
 
 
 // Functions:
@@ -110,7 +108,7 @@ Enumeration Func_1 (Capital_Letter ch1ParVal, Capital_Letter ch2ParVal);
 bool Func_2 (Str_30 str1ParRef, Str_30 str2ParRef);
 bool Func_3 (Enumeration enumParVal);
 
-void Proc_0 (void)
+void Proc_0 (uint32_t loops)
 {
 	One_Fifty int1Loc;
 	REG One_Fifty int2Loc;
@@ -120,7 +118,7 @@ void Proc_0 (void)
 	Str_30 str1Loc;
 	Str_30 str2Loc;
 	REG int runIndex;
-	REG int numberOfRuns = 0;
+	REG int numberOfRuns = loops;
 	if (numberOfRuns <= 0)
 	{
 		numberOfRuns = NUMBER_OF_RUNS;
@@ -157,6 +155,7 @@ void Proc_0 (void)
 	printf ("Using %s, HZ=%d\n", CLOCK_TYPE, HZ);
 	printf ("\n");
 
+	timer.stop();
 	Boolean done = false;
 	while (!done) {
 
@@ -165,8 +164,8 @@ void Proc_0 (void)
 		/***************/
 		/* Start timer */
 		/***************/
-
-		Start_Timer();
+		timer.reset();
+		timer.start();
 
 		for (runIndex = 1; runIndex <= numberOfRuns; ++runIndex)
 		{
@@ -214,12 +213,11 @@ void Proc_0 (void)
 		/**************/
 		/* Stop timer */
 		/**************/
+		timer.stop();
 
-		Stop_Timer();
+		g_dry_UserTime = timer.read_ms();
 
-		g_dry_UserTime = g_dry_EndTime - g_dry_BeginTime;
-
-		if (g_dry_UserTime < Too_Small_Time)
+		if (g_dry_UserTime < TOO_SMALL_TIME)
 		{
 			printf ("Measured time too small to obtain meaningful results\n");
 			numberOfRuns = numberOfRuns * 10;
@@ -282,11 +280,14 @@ void Proc_0 (void)
 		                / ((float) HZ * ((float) numberOfRuns));
 	g_dry_Dhrystones_Per_Second = ((float) HZ * (float) numberOfRuns)
 		                / (float) g_dry_UserTime;
+	g_dmips = g_dry_Dhrystones_Per_Second / VAX_11_780_DHRYSTONES_PER_SECOND;
 
 	printf ("Microseconds for one run through Dhrystone: ");
 	printf ("%10.1f \n", g_dry_Microseconds);
 	printf ("Dhrystones per Second:                      ");
 	printf ("%10.0f \n", g_dry_Dhrystones_Per_Second);
+	printf ("DMIPS:                                      ");
+	printf ("%10.0f \n", g_dmips);
 	printf ("\n");
 }
 

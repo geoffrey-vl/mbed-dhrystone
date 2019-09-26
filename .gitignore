@@ -4,3 +4,5 @@ mbed-os
 projectfiles
 *.py*
 .vscode
+GettingStarted.html
+mbed_config.h

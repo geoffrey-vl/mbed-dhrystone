@@ -6,7 +6,8 @@
 #error [NOT_SUPPORTED] test not supported
 #endif
 
-
+DigitalOut led1(LED1);
+DigitalIn btn(USER_BUTTON);
 
 void printSysStats()
 {
@@ -76,7 +77,16 @@ void printSysStats()
 
 int main()
 {
-    printSysStats();
-    Proc_0();
+    while(true)
+    {
+        printf("********************************************\n");
+        printSysStats();
+        Proc_0(0);
+        //signal test has been completed
+        while (btn.read() == 0) {
+            led1 = !led1;
+            wait(0.5);
+        }
+    }
     return 0;
 }
