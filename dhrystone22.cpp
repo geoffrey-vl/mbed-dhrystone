@@ -92,7 +92,8 @@ int             g_Array2 [50] [50];
 long            g_dry_UserTime;
 float           g_dry_Microseconds,
                 g_dry_Dhrystones_Per_Second,
-				g_dmips;
+				g_dmips,
+				g_efficiency_per_mhz;
 
 
 // Functions:
@@ -281,6 +282,7 @@ void Proc_0 (uint32_t loops)
 	g_dry_Dhrystones_Per_Second = ((float) HZ * (float) numberOfRuns)
 		                / (float) g_dry_UserTime;
 	g_dmips = g_dry_Dhrystones_Per_Second / VAX_11_780_DHRYSTONES_PER_SECOND;
+	g_efficiency_per_mhz = g_dmips / (SystemCoreClock/1000000);
 
 	printf ("Microseconds for one run through Dhrystone: ");
 	printf ("%10.1f \n", g_dry_Microseconds);
@@ -288,6 +290,8 @@ void Proc_0 (uint32_t loops)
 	printf ("%10.0f \n", g_dry_Dhrystones_Per_Second);
 	printf ("DMIPS:                                      ");
 	printf ("%10.0f \n", g_dmips);
+	printf ("Efficiancy per Mhz:                         ");
+	printf ("%10.2f \n", g_efficiency_per_mhz);
 	printf ("\n");
 }
 

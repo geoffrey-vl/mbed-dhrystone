@@ -136,17 +136,23 @@ DMIPS:                                              32
 
 ### Results
 
+- **Dhrystones per second** : the number of iterations of the main code loop per second. It is the absolute performance result for integer calculations.
+- **DMIPS** : the order of magnitude that the tested machine outperforms the VAX 11/780 (the reference 1 MIPS machine). The *Dhrystone Million of Instruction per Second* (DMIPS) is often used to compare absolute (integer) performance of CPU's.
+- **Efficiency per MHz** : the relative performence per CPU core tick is the DMIPS devided by the CPU frequency. It allows comparing CPU's running at different clock rates.
+
 ```
-+---------------------------+-----------------------------+-----------------------+------------+
-| DEVICE                    | CPU                         | Dhrystones per Second | DMIPS      |
-+===========================+=============================+=======================+============+
-| STM32 NUCLEO L496ZG       | 1 x ARM CORTEX M4 @ 80MHz   |                 55556 |         32 |
-+---------------------------+-----------------------------+-----------------------+------------+
-| STM32 NUCLEO F429ZI       | 1 x ARM CORTEX M4 @ 168MHz  |                291460 |        166 |
-+---------------------------+-----------------------------+-----------------------+------------+
-| STM32 NUCLEO F429ZI       | 1 x ARM CORTEX M4 @ 180MHz  |                312324 |        178 |
-+---------------------------+-----------------------------+-----------------------+------------+
++---------------------------+-----------------------------+-----------------------+------------+--------------------+
+| DEVICE                    | CPU                         | Dhrystones per Second |      DMIPS | Efficiency per MHz |
++===========================+=============================+=======================+============+====================+
+| STM32 NUCLEO L496ZG       | 1 x ARM CORTEX M4 @ 80MHz   |                116009 |         66 |               0.83 +
++---------------------------+-----------------------------+-----------------------+------------+--------------------+
+| STM32 NUCLEO F429ZI       | 1 x ARM CORTEX M4 @ 168MHz  |                291460 |        166 |               0.99 +
++---------------------------+-----------------------------+-----------------------+------------+--------------------+
+| STM32 NUCLEO F429ZI       | 1 x ARM CORTEX M4 @ 180MHz  |                312324 |        178 |               0.99 +
++---------------------------+-----------------------------+-----------------------+------------+--------------------+
 ```
+
+The benchmark does not (yet) fully support multicore system and will only take 1 core.
 
 ### "DHRYSTONE" Benchmark Program, Version "C, Version 2.2"
 
